@@ -2,6 +2,7 @@ MANIFEST.txt
 GDCdata/
 .Rproj.user
 .Rhistory
-.RData
+*.RData
 .Ruserdata
 README-files/
+*.Rproj
