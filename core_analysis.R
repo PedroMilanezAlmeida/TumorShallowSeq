@@ -372,8 +372,10 @@ sub.logCPM <- sub.logCPM[substr(rownames(sub.logCPM),
                                   12),]
 sub.testset <- sub.logCPM[
   testindex[[repetition]],]
+
 sub.trainset <- sub.logCPM[
   trainindex,]
+
 sub.trainset <- scale(sub.trainset, 
                       center = T, 
                       scale = T)
@@ -399,9 +401,9 @@ sub.cox.model <- coxph(Surv(time, status) ~
 cox.zph(sub.cox.model)
 
 #since alpha < 0.05, check validation model
-summary(sub.cox.model)
+summary(sub.cox.model)$coef
 #pretty close to the resut of validation of model trained on full set:
-summary(cox.model)
+summary(cox.model)$coef
 
 #even though the library size is reduced by 100-fold:
 #median library size of original dataset
