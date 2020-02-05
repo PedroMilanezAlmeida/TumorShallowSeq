@@ -6,12 +6,12 @@ output: md_document
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(eval = TRUE)
 ```
 
 # Cancer prognosis with shallow tumor RNA sequencing
 
-Here we describe a simplified version of the analysis that is at the core of our paper (doi:10.1038/s41591-019-0729-3). In this example, we show how a dramatic reduction in RNA sequencing depth has little impact on the performance of models that predict disease outcome based on tumor gene expression.
+Here we describe a simplified version of the analysis that is at the core of our paper (doi:10.1038/s41591-019-0729-3). Here, with the help of one example, we show how a dramatic reduction in RNA sequencing depth has little impact on the performance of machine learning-based linear Cox models that predict disease outcome based on tumor gene expression.
 
 Since this analysis is peformed in R, if you have not installed it yet, you can follow the intructions in https://cran.r-project.org/.
 
@@ -48,7 +48,7 @@ PFI <- c("BRCA", "LGG",  "PRAD", "READ", "TGCT", "THCA", "THYM")
 
 Next, a few packages need to be installed.
 
-Depending, internet connection and machine configuration, this can take up to several minutes.
+Depending on the internet connection and machine configuration, this can take up to several minutes.
 
 ```{r}
 tryCatch(library("caret"), 
@@ -167,7 +167,11 @@ if(packageVersion("TCGAbiolinks") < '2.12.3'){
               " Your version is: ",
               packageVersion("TCGAbiolinks"),
               ". Update TCGAbiolinks and try again.",
-              " Importantly, TCGAbiolinks 2.12.3 runs only on R 3.6.1."))
+              " Importantly, TCGAbiolinks 2.12.3 and higher only run on R 3.6.1."))
+} else {
+  paste0("Your version is: ",
+         packageVersion("TCGAbiolinks"),
+         ". This version should be able to handle this example")
 }
 ```
 
@@ -325,24 +329,25 @@ trainindex <- seq(dim(clin)[1])[
   !seq(dim(clin)[1]) %in% 
     testindex[[repetition]]]
 
-#outcome of test samples
+#outcome of disease for test samples
 test.clin <- clin[
   testindex[[repetition]],]
 test.clin <- droplevels(test.clin)
-#gene expression of test samples
+
+#gene expression for test samples
 testset <- logCPM[
   testindex[[repetition]],]
 
-#outcome of training samples
+#outcome of disease for training samples
 train.surv <- Surv(clin[trainindex, "time"], 
                    clin[trainindex, "status"])
 
-#gene expression of training samples
+#gene expression for training samples
 trainset <- logCPM[
   trainindex,]
 ```
 
-Before we can train our models on our training data, and test on our test samples, we need to scale the gene expression data. As in our paper, we first scaled the training data and then used the center and scale of each gene in the training set to scale the test set. Do this we ensure that training and testing data are on the same scale.
+Before we can train our models on our training data, and test on our test samples, we need to scale the gene expression data. As in our paper, we first scaled the training data and then used the center and scale of each gene in the training set to scale the test set. By doing this we ensure that training and testing data are on the same scale.
 
 ```{r}
 #scale gene expression of training samples
@@ -357,7 +362,7 @@ testset <- scale(testset,
 
 ```
 
-Now it's finally time to train our model! We will make a function (build.model) that creates 5 cross-validation folds and feeds our training algorithm with a range of alpha values. In case you're not familiar with these terms used here, you can find more information here: https://web.stanford.edu/~hastie/glmnet/glmnet_alpha.html.
+Now it's finally time to train our model! We will make a function (build.model) that creates 5 cross-validation folds and feeds our training algorithm with a range of alpha values. In case you're not familiar with these terms used here, this is a good start to find more information: https://web.stanford.edu/~hastie/glmnet/glmnet_alpha.html.
 
 Our "build.model" function keeps the same cross-validation folds across different alpha values to ensure that the performances of each alpha are compared based on the same data. If you are using a unix system (but not on windows), the function will run in parallel, but it will still take several minutes to hours to train depending on the number of samples used (adrenocortical carcinoma [ACC] has relatively few samples and should run much faster than breast cancer [BRCA], for example). Also, training takes a lot of memory! If you are running out of memory, make sure to change the number of cores used in in "detectCores()-1" (go from -1 to -2 or -3 to reduce the number of cores) and try again.
 
@@ -424,14 +429,16 @@ summary(cox.model)
 
 ```
 
-Next we can subsample our count matrix to simulate a 100-fold reduction in sequencing depth and see how that impacts predictive performance.
+In this example, gene expression RNA-seq data can be used to predict outcome of disease in adrenocortical carcinoma with a concordance index of `r summary(cox.model)$concordance["C"] %>% round(2)` and a p-value (likelihood ratio test) of `r summary(cox.model)$logtest["pvalue"] %>% formatC(format = "e", digits = 0)`.
+
+Next we can subsample our count matrix to simulate a 100-fold reduction in sequencing depth and see how that impacts predictive performance. The fold reduction can be controlled here by changing "proportion" in "generateSubsampledMatrix" (for example, proportion = 0.001 for a 1000-fold reduction, or proportion = 0.1 for 10-fold reduction).
 
 ```{r}
 #subsample gene expression data
 #here, 100-fold reduction was used
 sub.count <- generateSubsampledMatrix(counts = count,
                                       proportion = 0.01,
-                                      seed = 2019)
+                                      seed = 2020)
 sub.logCPM <- log.cpm(sub.count)
 duplicate.samples <-
   sort(rownames(sub.logCPM)[
@@ -454,7 +461,7 @@ sub.logCPM <- sub.logCPM[substr(rownames(sub.logCPM),
                                   12),]
 ```
 
-After splitting and scaling the subsampled data, we can build a model that takes the subsampled gene expressio data as input and aims at predicting the relative risk of death (or recurrence).
+After splitting and scaling the subsampled data, we can build a model that takes the subsampled gene expression data as input and aims at predicting the relative risk of death (or recurrence, depending on outcome measure used).
 
 ```{r}
 sub.testset <- sub.logCPM[
@@ -477,7 +484,7 @@ sub.model <- build.model(scaled.log.cpm = sub.trainset,
                          surv = train.surv)
 ```
 
-With the model built on subsampled gene expression data we ca try to predict the relative risk of death of patients in the subsampled test set. Just as for full coverage models, we can test whether the predicted relative riskof death correlates with actual survival using Cox regression if the ph-assumption is not violated.
+With the model built on subsampled gene expression data we can try to predict the relative risk of death (or recurrence) of patients in the subsampled test set. Just as for full-coverage models, we can test whether the predicted relative risk correlates with actual outcome using Cox regression if the ph-assumption is not violated.
 
 ```{r}
 test.clin$sub.pred.resp <- 
@@ -494,6 +501,8 @@ cox.zph(sub.cox.model)
 #since alpha < 0.05, check validation model
 summary(sub.cox.model)
 ```
+
+Please note that gene expression RNA-seq data at much shallower depths could also be used to predict outcome of disease in adrenocortical carcinoma. The concordance index was `r summary(sub.cox.model)$concordance["C"] %>% round(2)` and the p-value (likelihood ratio test) was `r summary(sub.cox.model)$logtest["pvalue"] %>% formatC(format = "e", digits = 0)`.
 
 These results demonstrate, with the help of an single example, that a strong reduction on sequencing depth does not strongly impact the performance of models that take RNA-seq data and try to predict disease outcome.
 
@@ -522,4 +531,4 @@ sub.count %>% t(.) %>% rowSums() %>% median(.) %>% formatC(., format = "e", digi
 
 ```
 
-In case, this analysis can be run on any cancer type available in TCGA (see second code chunk in the beginning; make sure to pick the correct disease outcome [OS vs PFI]). In addition, any repetition from 1 to 100 can be run to ensure the results are not biased due to unequal sample distributions.
+In case, this analysis can be run on any cancer type available in TCGA (see second code chunk in the beginning; make sure to pick the correct disease outcome [OS vs PFI]). In addition, any repetition from 1 to 100 can be run to see whether the results are biased due to unequal sample distributions.
