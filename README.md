@@ -30,7 +30,7 @@ updated.
 
 In this example, we will use adrenocortical carcinoma (ACC) to
 demonstrate how a drastic reduction in RNA-seq depth still gives enough
-information to predict outcome of disease. You can change the cancer
+information to predict the relative risk of adverse outcome of disease. You can change the cancer
 type by changing “ACC” here to any of the standard cancer type name
 abbreviations of TCGA:
 <a href="https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/tcga-study-abbreviations" class="uri">https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/tcga-study-abbreviations</a>.
