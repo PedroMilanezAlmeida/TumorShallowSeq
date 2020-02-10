@@ -33,7 +33,7 @@ demonstrate how a drastic reduction in RNA-seq depth still gives enough
 information to predict the relative risk of adverse outcome of disease. You can change the cancer
 type by changing “ACC” here to any of the standard cancer type name
 abbreviations of TCGA:
-<a href="https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/tcga-study-abbreviations" class="uri">https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/tcga-study-abbreviations</a>.
+<a href="https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/tcga-study-abbreviations" class="uri">https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/tcga-study-abbreviations</a>. Please keep in mind we did not perform the analysis for DLBC, KICH, PCPG, CHOL, SKCM and SARC as described in the methods our paper.
 
     type <- "ACC"
 
