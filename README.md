@@ -1,11 +1,11 @@
 Cancer prognosis with shallow tumor RNA sequencing
 ==================================================
 
-Here we describe a simplified version of the analysis that is at the
+Here, we describe a simplified version of the analysis that is at the
 core of our paper
 (<a href="doi:10.1038/s41591-019-0729-3" class="uri">doi:10.1038/s41591-019-0729-3</a>).
-Here, with the help of one example, we show how a dramatic reduction in
-RNA sequencing depth has little impact on the performance of machine
+With the help of one example, we show how a dramatic reduction in
+RNA sequencing depth has little to no impact on the performance of machine
 learning-based linear Cox models that predict disease outcome based on
 tumor gene expression.
 
