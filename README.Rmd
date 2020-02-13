@@ -6,12 +6,12 @@ output: md_document
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(eval = TRUE)
+knitr::opts_chunk$set(eval = FALSE)
 ```
 
 # Cancer prognosis with shallow tumor RNA sequencing
 
-Here we describe a simplified version of the analysis that is at the core of our paper (doi:10.1038/s41591-019-0729-3). Here, with the help of one example, we show how a dramatic reduction in RNA sequencing depth has little impact on the performance of machine learning-based linear Cox models that predict disease outcome based on tumor gene expression.
+Here, we describe a simplified version of the analysis that is at the core of our paper (https://www.nature.com/articles/s41591-019-0729-3). With the help of one example, we show how a dramatic reduction in RNA sequencing depth has little to no impact on the performance of machine learning-based linear Cox models that predict disease outcome based on tumor gene expression.
 
 Since this analysis is peformed in R, if you have not installed it yet, you can follow the intructions in https://cran.r-project.org/.
 
@@ -30,7 +30,7 @@ if(sessionInfo()$R.version$version.string < '3.6.1'){
 }
 ```
 
-In this example, we will use adrenocortical carcinoma (ACC) to demonstrate how a drastic reduction in RNA-seq depth still gives enough information to predict outcome of disease. You can change the cancer type by changing "ACC" here to any of the standard cancer type name abbreviations of TCGA: https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/tcga-study-abbreviations. 
+In this example, we will use adrenocortical carcinoma (ACC) to demonstrate how a drastic reduction in RNA-seq depth still gives enough information to predict the relative risk of adverse outcome of disease. You can change the cancer type by changing "ACC" here to any of the standard cancer type name abbreviations of TCGA: https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/tcga-study-abbreviations. Please keep in mind we did not perform the analysis for DLBC, KICH, PCPG, CHOL, SKCM and SARC as described in the methods our paper.
 
 ```{r}
 type <- "ACC"
@@ -159,9 +159,11 @@ tryCatch(library("limma"),
                                 ask = FALSE)
            library("limma")
          })
+```
 
-### It's really essential that your version of TCGAbiolinks is 2.12.3 or newer
+It's really essential that your version of TCGAbiolinks is 2.12.3 or newer. You can figure that out using:
 
+```{r}
 if(packageVersion("TCGAbiolinks") < '2.12.3'){
   stop(paste0("This will not run with versions of TCGAbiolinks older than 2.12.3.",
               " Your version is: ",
@@ -429,7 +431,18 @@ summary(cox.model)
 
 ```
 
-In this example, gene expression RNA-seq data can be used to predict outcome of disease in adrenocortical carcinoma with a concordance index of `r summary(cox.model)$concordance["C"] %>% round(2)` and a p-value (likelihood ratio test) of `r summary(cox.model)$logtest["pvalue"] %>% formatC(format = "e", digits = 0)`.
+In this example, gene expression RNA-seq data can be used to predict outcome of disease in adrenocortical carcinoma with a concordance index of:
+
+```{r}
+summary(cox.model)$concordance["C"] %>% round(2)
+```
+
+
+and a p-value in the likelihood ratio test of:
+
+```{r} 
+summary(cox.model)$logtest["pvalue"] %>% formatC(format = "e", digits = 0)
+```
 
 Next we can subsample our count matrix to simulate a 100-fold reduction in sequencing depth and see how that impacts predictive performance. The fold reduction can be controlled here by changing "proportion" in "generateSubsampledMatrix" (for example, proportion = 0.001 for a 1000-fold reduction, or proportion = 0.1 for 10-fold reduction).
 
@@ -502,10 +515,20 @@ cox.zph(sub.cox.model)
 summary(sub.cox.model)
 ```
 
-Please note that gene expression RNA-seq data at much shallower depths could also be used to predict outcome of disease in adrenocortical carcinoma. The concordance index was `r summary(sub.cox.model)$concordance["C"] %>% round(2)` and the p-value (likelihood ratio test) was `r summary(sub.cox.model)$logtest["pvalue"] %>% formatC(format = "e", digits = 0)`.
+These results help illustrate, with the help of an single example, that a strong reduction on sequencing depth does not strongly impact the performance of models that take RNA-seq data and try to predict disease outcome. They indicate that gene expression RNA-seq data at much shallower depths could also be used to predict outcome of disease in adrenocortical carcinoma. 
+The concordance index was:
 
-These results demonstrate, with the help of an single example, that a strong reduction on sequencing depth does not strongly impact the performance of models that take RNA-seq data and try to predict disease outcome.
+```{r}
+summary(sub.cox.model)$concordance["C"] %>% round(2)
+``` 
 
+And the p-value (from likelihood ratio test) was:
+
+```{r}
+summary(sub.cox.model)$logtest["pvalue"] %>% formatC(format = "e", digits = 0)
+```
+
+With the follwoing code, you can see some stats for comparison:
 ```{r}
 #performance stats
 ifelse(summary(sub.cox.model)$coef < 1e-3,
@@ -523,12 +546,17 @@ ifelse(summary(cox.model)$coef < 1e-3,
        no = round(summary(cox.model)$coef,
                   digits = 2) %>%
          as.numeric())
+```
 
+And with this code, you can see that there was a 100-fold difference in read sequencing depth between both datasets:
+```{r}
 #median library size of original dataset
 count %>% t(.) %>% rowSums() %>% median(.) %>% formatC(., format = "e", digits = 1) %>% paste0("median library size of original dataset: ", ., " counts")
+
+
 #median library size of subsampled dataset
 sub.count %>% t(.) %>% rowSums() %>% median(.) %>% formatC(., format = "e", digits = 1) %>% paste0("median library size of subsampled dataset: ", ., " counts")
 
 ```
 
-In case, this analysis can be run on any cancer type available in TCGA (see second code chunk in the beginning; make sure to pick the correct disease outcome [OS vs PFI]). In addition, any repetition from 1 to 100 can be run to see whether the results are biased due to unequal sample distributions.
+If desired, this analysis can be run on any cancer type available in TCGA (see second code chunk in the beginning; make sure to pick the correct disease outcome [OS vs PFI]). In addition, any repetition from 1 to 100 can be run to see whether the results are biased due to unequal sample distributions. To change the fold reduction to be simulated, change "proportion" in the function "generateSubsampledMatrix".

@@ -3,9 +3,9 @@ Cancer prognosis with shallow tumor RNA sequencing
 
 Here, we describe a simplified version of the analysis that is at the
 core of our paper
-(<a href="doi:10.1038/s41591-019-0729-3" class="uri">https://www.nature.com/articles/s41591-019-0729-3</a>).
-With the help of one example, we show how a dramatic reduction in
-RNA sequencing depth has little to no impact on the performance of machine
+(<a href="https://www.nature.com/articles/s41591-019-0729-3" class="uri">https://www.nature.com/articles/s41591-019-0729-3</a>).
+With the help of one example, we show how a dramatic reduction in RNA
+sequencing depth has little to no impact on the performance of machine
 learning-based linear Cox models that predict disease outcome based on
 tumor gene expression.
 
@@ -30,10 +30,12 @@ updated.
 
 In this example, we will use adrenocortical carcinoma (ACC) to
 demonstrate how a drastic reduction in RNA-seq depth still gives enough
-information to predict the relative risk of adverse outcome of disease. You can change the cancer
-type by changing “ACC” here to any of the standard cancer type name
-abbreviations of TCGA:
-<a href="https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/tcga-study-abbreviations" class="uri">https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/tcga-study-abbreviations</a>. Please keep in mind we did not perform the analysis for DLBC, KICH, PCPG, CHOL, SKCM and SARC as described in the methods our paper.
+information to predict the relative risk of adverse outcome of disease.
+You can change the cancer type by changing “ACC” here to any of the
+standard cancer type name abbreviations of TCGA:
+<a href="https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/tcga-study-abbreviations" class="uri">https://gdc.cancer.gov/resources-tcga-users/tcga-code-tables/tcga-study-abbreviations</a>.
+Please keep in mind we did not perform the analysis for DLBC, KICH,
+PCPG, CHOL, SKCM and SARC as described in the methods our paper.
 
     type <- "ACC"
 
@@ -60,11 +62,6 @@ take up to several minutes.
                                 repos = 'http://cran.us.r-project.org')
                library("caret")
              })
-
-    ## Loading required package: lattice
-
-    ## Loading required package: ggplot2
-
     tryCatch(library("openxlsx"), 
              error = function(e){
                install.packages(pkgs =  "openxlsx", 
@@ -77,71 +74,18 @@ take up to several minutes.
                                 repos = 'http://cran.us.r-project.org')
                library("doParallel")
              })
-
-    ## Loading required package: foreach
-
-    ## Loading required package: iterators
-
-    ## Loading required package: parallel
-
     tryCatch(library("rms"), 
              error = function(e){
                install.packages(pkgs =  "rms", 
                                 repos = 'http://cran.us.r-project.org')
                library("rms")
              })
-
-    ## Loading required package: Hmisc
-
-    ## Loading required package: survival
-
-    ## 
-    ## Attaching package: 'survival'
-
-    ## The following object is masked from 'package:caret':
-    ## 
-    ##     cluster
-
-    ## Loading required package: Formula
-
-    ## 
-    ## Attaching package: 'Hmisc'
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     format.pval, units
-
-    ## Loading required package: SparseM
-
-    ## 
-    ## Attaching package: 'SparseM'
-
-    ## The following object is masked from 'package:base':
-    ## 
-    ##     backsolve
-
     tryCatch(library("dplyr"), 
              error = function(e){
                install.packages(pkgs =  "dplyr", 
                                 repos = 'http://cran.us.r-project.org')
                library("dplyr")
              })
-
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:Hmisc':
-    ## 
-    ##     src, summarize
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
     tryCatch(library("survival"), 
              error = function(e){
                install.packages(pkgs =  "survival", 
@@ -154,11 +98,6 @@ take up to several minutes.
                                 repos = 'http://cran.us.r-project.org')
                library("glmnet")
              })
-
-    ## Loading required package: Matrix
-
-    ## Loaded glmnet 3.0-2
-
     tryCatch(library("SummarizedExperiment"), 
              error = function(e){
                if (!requireNamespace("BiocManager",
@@ -170,114 +109,6 @@ take up to several minutes.
                                     ask = FALSE)
                library("SummarizedExperiment")
              })
-
-    ## Loading required package: GenomicRanges
-
-    ## Loading required package: stats4
-
-    ## Loading required package: BiocGenerics
-
-    ## 
-    ## Attaching package: 'BiocGenerics'
-
-    ## The following object is masked from 'package:Matrix':
-    ## 
-    ##     which
-
-    ## The following objects are masked from 'package:dplyr':
-    ## 
-    ##     combine, intersect, setdiff, union
-
-    ## The following objects are masked from 'package:parallel':
-    ## 
-    ##     clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
-    ##     clusterExport, clusterMap, parApply, parCapply, parLapply,
-    ##     parLapplyLB, parRapply, parSapply, parSapplyLB
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     IQR, mad, sd, var, xtabs
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     anyDuplicated, append, as.data.frame, basename, cbind, colnames,
-    ##     dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,
-    ##     grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
-    ##     order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
-    ##     rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,
-    ##     union, unique, unsplit, which, which.max, which.min
-
-    ## Loading required package: S4Vectors
-
-    ## 
-    ## Attaching package: 'S4Vectors'
-
-    ## The following object is masked from 'package:Matrix':
-    ## 
-    ##     expand
-
-    ## The following objects are masked from 'package:dplyr':
-    ## 
-    ##     first, rename
-
-    ## The following object is masked from 'package:base':
-    ## 
-    ##     expand.grid
-
-    ## Loading required package: IRanges
-
-    ## 
-    ## Attaching package: 'IRanges'
-
-    ## The following objects are masked from 'package:dplyr':
-    ## 
-    ##     collapse, desc, slice
-
-    ## Loading required package: GenomeInfoDb
-
-    ## Loading required package: Biobase
-
-    ## Welcome to Bioconductor
-    ## 
-    ##     Vignettes contain introductory material; view with
-    ##     'browseVignettes()'. To cite Bioconductor, see
-    ##     'citation("Biobase")', and for packages 'citation("pkgname")'.
-
-    ## 
-    ## Attaching package: 'Biobase'
-
-    ## The following object is masked from 'package:Hmisc':
-    ## 
-    ##     contents
-
-    ## Loading required package: DelayedArray
-
-    ## Loading required package: matrixStats
-
-    ## 
-    ## Attaching package: 'matrixStats'
-
-    ## The following objects are masked from 'package:Biobase':
-    ## 
-    ##     anyMissing, rowMedians
-
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     count
-
-    ## Loading required package: BiocParallel
-
-    ## 
-    ## Attaching package: 'DelayedArray'
-
-    ## The following objects are masked from 'package:matrixStats':
-    ## 
-    ##     colMaxs, colMins, colRanges, rowMaxs, rowMins, rowRanges
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     aperm, apply, rowsum
-
     tryCatch(library("TCGAbiolinks"), 
              error = function(e){
                if (!requireNamespace("BiocManager",
@@ -322,16 +153,6 @@ take up to several minutes.
                                     ask = FALSE)
                library("edgeR")
              })
-
-    ## Loading required package: limma
-
-    ## 
-    ## Attaching package: 'limma'
-
-    ## The following object is masked from 'package:BiocGenerics':
-    ## 
-    ##     plotMA
-
     tryCatch(library("limma"), 
              error = function(e){
                if (!requireNamespace("BiocManager",
@@ -344,7 +165,8 @@ take up to several minutes.
                library("limma")
              })
 
-    ### It's really essential that your version of TCGAbiolinks is 2.12.3 or newer
+It’s really essential that your version of TCGAbiolinks is 2.12.3 or
+newer. You can figure that out using:
 
     if(packageVersion("TCGAbiolinks") < '2.12.3'){
       stop(paste0("This will not run with versions of TCGAbiolinks older than 2.12.3.",
@@ -358,8 +180,6 @@ take up to several minutes.
              ". This version should be able to handle this example")
     }
 
-    ## [1] "Your version is: 2.14.0. This version should be able to handle this example"
-
 Now, we can get and pre-process the gene expression data.
 
     #get gene expression data
@@ -369,91 +189,16 @@ Now, we can get and pre-process the gene expression data.
                       data.type = "Gene Expression Quantification",
                       workflow.type  = "HTSeq - Counts",
                       legacy = FALSE)
-
-    ## --------------------------------------
-
-    ## o GDCquery: Searching in GDC database
-
-    ## --------------------------------------
-
-    ## Genome of reference: hg38
-
-    ## --------------------------------------------
-
-    ## oo Accessing GDC. This might take a while...
-
-    ## --------------------------------------------
-
-    ## ooo Project: TCGA-ACC
-
-    ## --------------------
-
-    ## oo Filtering results
-
-    ## --------------------
-
-    ## ooo By data.type
-
-    ## ooo By workflow.type
-
-    ## ----------------
-
-    ## oo Checking data
-
-    ## ----------------
-
-    ## ooo Check if there are duplicated cases
-
-    ## ooo Check if there results for the query
-
-    ## -------------------
-
-    ## o Preparing output
-
-    ## -------------------
-
     GDCdownload(query, 
                 method = "api",
                 files.per.chunk = 10, 
                 directory = "GDCdata")
-
-    ## Downloading data for project TCGA-ACC
-
-    ## Of the 79 files for download 79 already exist.
-
-    ## All samples have been already downloaded
 
     data <- GDCprepare(query,
                        save = TRUE,
                        save.filename = paste0("RangSummExp.", 
                                               as.character(type),
                                               ".Rdata"))
-
-    ## |                                                    |  0%                      |                                                    |1.265823% ~58 s remaining |=                                                   |2.531646% ~34 s remaining |=                                                   |3.797468% ~24 s remaining |==                                                  |5.063291% ~19 s remaining |===                                                 |6.329114% ~16 s remaining |===                                                 |7.594937% ~14 s remaining |====                                                |8.860759% ~12 s remaining |=====                                               |10.12658% ~11 s remaining |=====                                               |11.39241% ~15 s remaining |======                                              |12.65823% ~14 s remaining |=======                                             |13.92405% ~13 s remaining |=======                                             |15.18987% ~12 s remaining |========                                            |16.4557% ~11 s remaining  |=========                                           |17.72152% ~10 s remaining |=========                                           |18.98734% ~10 s remaining |==========                                          |20.25316% ~9 s remaining  |===========                                         |21.51899% ~9 s remaining  |===========                                         |22.78481% ~9 s remaining  |============                                        |24.05063% ~8 s remaining  |=============                                       |25.31646% ~8 s remaining  |=============                                       |26.58228% ~8 s remaining  |==============                                      |27.8481% ~7 s remaining   |===============                                     |29.11392% ~7 s remaining  |===============                                     |30.37975% ~7 s remaining  |================                                    |31.64557% ~7 s remaining  |=================                                   |32.91139% ~6 s remaining  |=================                                   |34.17722% ~6 s remaining  |==================                                  |35.44304% ~6 s remaining  |===================                                 |36.70886% ~6 s remaining  |===================                                 |37.97468% ~6 s remaining  |====================                                |39.24051% ~5 s remaining  |=====================                               |40.50633% ~5 s remaining  |=====================                               |41.77215% ~5 s remaining  |======================                              |43.03797% ~5 s remaining  |=======================                             |44.3038% ~5 s remaining   |=======================                             |45.56962% ~5 s remaining  |========================                            |46.83544% ~4 s remaining  |=========================                           |48.10127% ~4 s remaining  |=========================                           |49.36709% ~5 s remaining  |==========================                          |50.63291% ~5 s remaining  |==========================                          |51.89873% ~4 s remaining  |===========================                         |53.16456% ~4 s remaining  |============================                        |54.43038% ~4 s remaining  |============================                        |55.6962% ~4 s remaining   |=============================                       |56.96203% ~4 s remaining  |==============================                      |58.22785% ~4 s remaining  |==============================                      |59.49367% ~3 s remaining  |===============================                     |60.75949% ~3 s remaining  |================================                    |62.02532% ~3 s remaining  |================================                    |63.29114% ~3 s remaining  |=================================                   |64.55696% ~3 s remaining  |==================================                  |65.82278% ~3 s remaining  |==================================                  |67.08861% ~3 s remaining  |===================================                 |68.35443% ~3 s remaining  |====================================                |69.62025% ~2 s remaining  |====================================                |70.88608% ~2 s remaining  |=====================================               |72.1519% ~2 s remaining   |======================================              |73.41772% ~2 s remaining  |======================================              |74.68354% ~2 s remaining  |=======================================             |75.94937% ~2 s remaining  |========================================            |77.21519% ~2 s remaining  |========================================            |78.48101% ~2 s remaining  |=========================================           |79.74684% ~2 s remaining  |==========================================          |81.01266% ~1 s remaining  |==========================================          |82.27848% ~1 s remaining  |===========================================         |83.5443% ~1 s remaining   |============================================        |84.81013% ~1 s remaining  |============================================        |86.07595% ~1 s remaining  |=============================================       |87.34177% ~1 s remaining  |==============================================      |88.60759% ~1 s remaining  |==============================================      |89.87342% ~1 s remaining  |===============================================     |91.13924% ~1 s remaining  |================================================    |92.40506% ~1 s remaining  |================================================    |93.67089% ~1 s remaining  |=================================================   |94.93671% ~0 s remaining  |==================================================  |96.20253% ~0 s remaining  |==================================================  |97.46835% ~0 s remaining  |=================================================== |98.73418% ~0 s remaining  |====================================================|100% ~0 s remaining       |====================================================|100%                      Completed after 8 s
-
-    ## Starting to add information to samples
-
-    ##  => Add clinical information to samples
-
-    ## Add FFPE information. More information at: 
-    ## => https://cancergenome.nih.gov/cancersselected/biospeccriteria 
-    ## => http://gdac.broadinstitute.org/runs/sampleReports/latest/FPPP_FFPE_Cases.html
-
-    ##  => Adding subtype information to samples
-
-    ## acc subtype information from:doi:10.1016/j.ccell.2016.04.002
-
-    ## Accessing www.ensembl.org to get gene information
-
-    ## Downloading genome information (try:0) Using: Human genes (GRCh38.p13)
-
-    ## Cache found
-
-    ## From the 60483 genes we couldn't map 3984
-
-    ## Saving file:RangSummExp.ACC.Rdata
-
-    ## File saved
 
     count <- assay(data)[,colData(data)$shortLetterCode == "TP" |
                            colData(data)$shortLetterCode == "TB" |
@@ -701,34 +446,18 @@ proportional hazards assumption.
     #test proportional hazards assumption
     cox.zph(cox.model)
 
-    ##            chisq df    p
-    ## pred.resp 0.0581  1 0.81
-    ## GLOBAL    0.0581  1 0.81
-
     #since alpha < 0.05, check validation model
     summary(cox.model)
 
-    ## Call:
-    ## coxph(formula = Surv(time, status) ~ pred.resp, data = test.clin)
-    ## 
-    ##   n= 39, number of events= 15 
-    ## 
-    ##             coef exp(coef) se(coef)     z Pr(>|z|)    
-    ## pred.resp 0.8889    2.4325   0.2510 3.541 0.000398 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ##           exp(coef) exp(-coef) lower .95 upper .95
-    ## pred.resp     2.432     0.4111     1.487     3.978
-    ## 
-    ## Concordance= 0.791  (se = 0.058 )
-    ## Likelihood ratio test= 14.76  on 1 df,   p=1e-04
-    ## Wald test            = 12.54  on 1 df,   p=4e-04
-    ## Score (logrank) test = 14.85  on 1 df,   p=1e-04
-
 In this example, gene expression RNA-seq data can be used to predict
 outcome of disease in adrenocortical carcinoma with a concordance index
-of 0.79 and a p-value (likelihood ratio test) of 1e-04.
+of:
+
+    summary(cox.model)$concordance["C"] %>% round(2)
+
+and a p-value in the likelihood ratio test of:
+
+    summary(cox.model)$logtest["pvalue"] %>% formatC(format = "e", digits = 0)
 
 Next we can subsample our count matrix to simulate a 100-fold reduction
 in sequencing depth and see how that impacts predictive performance. The
@@ -803,40 +532,23 @@ Cox regression if the ph-assumption is not violated.
                            data = test.clin)
     cox.zph(sub.cox.model)
 
-    ##               chisq df    p
-    ## sub.pred.resp 0.115  1 0.73
-    ## GLOBAL        0.115  1 0.73
-
     #since alpha < 0.05, check validation model
     summary(sub.cox.model)
 
-    ## Call:
-    ## coxph(formula = Surv(time, status) ~ sub.pred.resp, data = test.clin)
-    ## 
-    ##   n= 39, number of events= 15 
-    ## 
-    ##                 coef exp(coef) se(coef)     z Pr(>|z|)    
-    ## sub.pred.resp 0.9382    2.5555   0.2529 3.709 0.000208 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ##               exp(coef) exp(-coef) lower .95 upper .95
-    ## sub.pred.resp     2.555     0.3913     1.557     4.195
-    ## 
-    ## Concordance= 0.818  (se = 0.054 )
-    ## Likelihood ratio test= 16.37  on 1 df,   p=5e-05
-    ## Wald test            = 13.76  on 1 df,   p=2e-04
-    ## Score (logrank) test = 16.68  on 1 df,   p=4e-05
-
-Please note that gene expression RNA-seq data at much shallower depths
-could also be used to predict outcome of disease in adrenocortical
-carcinoma. The concordance index was 0.82 and the p-value (likelihood
-ratio test) was 5e-05.
-
-These results demonstrate, with the help of an single example, that a
-strong reduction on sequencing depth does not strongly impact the
+These results help illustrate, with the help of an single example, that
+a strong reduction on sequencing depth does not strongly impact the
 performance of models that take RNA-seq data and try to predict disease
-outcome.
+outcome. They indicate that gene expression RNA-seq data at much
+shallower depths could also be used to predict outcome of disease in
+adrenocortical carcinoma. The concordance index was:
+
+    summary(sub.cox.model)$concordance["C"] %>% round(2)
+
+And the p-value (from likelihood ratio test) was:
+
+    summary(sub.cox.model)$logtest["pvalue"] %>% formatC(format = "e", digits = 0)
+
+With the follwoing code, you can see some stats for comparison:
 
     #performance stats
     ifelse(summary(sub.cox.model)$coef < 1e-3,
@@ -847,9 +559,6 @@ outcome.
                       digits = 2) %>%
              as.numeric())
 
-    ##               coef   exp(coef) se(coef) z      Pr(>|z|) 
-    ## sub.pred.resp "0.94" "2.56"    "0.25"   "3.71" "2.1e-04"
-
     ifelse(summary(cox.model)$coef < 1e-3,
            yes = formatC(summary(cox.model)$coef,
                          format = "e",
@@ -858,21 +567,19 @@ outcome.
                       digits = 2) %>%
              as.numeric())
 
-    ##           coef   exp(coef) se(coef) z      Pr(>|z|) 
-    ## pred.resp "0.89" "2.43"    "0.25"   "3.54" "4.0e-04"
+And with this code, you can see that there was a 100-fold difference in
+read sequencing depth between both datasets:
 
     #median library size of original dataset
     count %>% t(.) %>% rowSums() %>% median(.) %>% formatC(., format = "e", digits = 1) %>% paste0("median library size of original dataset: ", ., " counts")
 
-    ## [1] "median library size of original dataset: 4.1e+07 counts"
 
     #median library size of subsampled dataset
     sub.count %>% t(.) %>% rowSums() %>% median(.) %>% formatC(., format = "e", digits = 1) %>% paste0("median library size of subsampled dataset: ", ., " counts")
 
-    ## [1] "median library size of subsampled dataset: 4.1e+05 counts"
-
-In case, this analysis can be run on any cancer type available in TCGA
-(see second code chunk in the beginning; make sure to pick the correct
-disease outcome \[OS vs PFI\]). In addition, any repetition from 1 to
-100 can be run to see whether the results are biased due to unequal
-sample distributions.
+If desired, this analysis can be run on any cancer type available in
+TCGA (see second code chunk in the beginning; make sure to pick the
+correct disease outcome \[OS vs PFI\]). In addition, any repetition from
+1 to 100 can be run to see whether the results are biased due to unequal
+sample distributions. To change the fold reduction to be simulated,
+change “proportion” in the function “generateSubsampledMatrix”.
