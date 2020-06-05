@@ -446,7 +446,7 @@ proportional hazards assumption.
     #test proportional hazards assumption
     cox.zph(cox.model)
 
-    #since alpha < 0.05, check validation model
+    #since alpha > 0.05, check validation model
     summary(cox.model)
 
 In this example, gene expression RNA-seq data can be used to predict
