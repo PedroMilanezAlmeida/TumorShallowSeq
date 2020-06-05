@@ -532,7 +532,7 @@ Cox regression if the ph-assumption is not violated.
                            data = test.clin)
     cox.zph(sub.cox.model)
 
-    #since alpha < 0.05, check validation model
+    #since alpha > 0.05, check validation model
     summary(sub.cox.model)
 
 These results help illustrate, with the help of an single example, that
